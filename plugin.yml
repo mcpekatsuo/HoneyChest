@@ -13,24 +13,24 @@ commands:
   permission: hc.command
 permissions:
  honeychest.*:
-  description: "HoneyChest Plugin‚Å’ñ‹Ÿ‚³‚ê‚é‘S‹@”\‚ªg—p‰Â”\‚É‚È‚è‚Ü‚·B"
+  description: "HoneyChest Pluginã§æä¾›ã•ã‚Œã‚‹å…¨æ©Ÿèƒ½ãŒä½¿ç”¨å¯èƒ½ã«ãªã‚Šã¾ã™ã€‚"
   default: op
   children:
    honeychest.info:
     default: true
-    description: "/hc info‚ªg—p‰Â”\‚É‚È‚è‚Ü‚·B"
+    description: "/hc infoãŒä½¿ç”¨å¯èƒ½ã«ãªã‚Šã¾ã™ã€‚"
    honeychest.help:
     default: true
-    description: "/hc help‚ªg—p‰Â”\‚É‚È‚è‚Ü‚·B"
+    description: "/hc helpãŒä½¿ç”¨å¯èƒ½ã«ãªã‚Šã¾ã™ã€‚"
    honeychest.set:
     default: op
-    description: "/hc set‚ªg—p‰Â”\‚É‚È‚è‚Ü‚·B"
+    description: "/hc setãŒä½¿ç”¨å¯èƒ½ã«ãªã‚Šã¾ã™ã€‚"
    honeychest.remove:
     default: op
-    description: "/hc remove‚ªg—p‰Â”\‚É‚È‚è‚Ü‚·B"
+    description: "/hc removeãŒä½¿ç”¨å¯èƒ½ã«ãªã‚Šã¾ã™ã€‚"
    honeychest.reload:
     default: op
-    description: "/hc reload‚ªg—p‰Â”\‚É‚È‚è‚Ü‚·B"
+    description: "/hc reloadãŒä½¿ç”¨å¯èƒ½ã«ãªã‚Šã¾ã™ã€‚"
    honeychest.exception:
     default: op
-    description: "‚±‚ÌŒ ŒÀ‚ğ‚Á‚Ä‚¢‚él‚ªƒnƒj[ƒ`ƒFƒXƒg‚ğŠJ‚¯‚Ä‚àKick‚È‚Ç‚Ì‹@”\‚ªì“®‚µ‚Ü‚¹‚ñB"
+    description: "ã“ã®æ¨©é™ã‚’æŒã£ã¦ã„ã‚‹äººãŒãƒãƒ‹ãƒ¼ãƒã‚§ã‚¹ãƒˆã‚’é–‹ã‘ã¦ã‚‚Kickãªã©ã®æ©Ÿèƒ½ãŒä½œå‹•ã—ã¾ã›ã‚“ã€‚"
