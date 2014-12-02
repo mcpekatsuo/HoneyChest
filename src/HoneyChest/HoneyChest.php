@@ -24,7 +24,7 @@ class HoneyChest extends PluginBase implements Listener{
 		if(!file_exists($this->getDataFolder() . "config.yml")){
 			$this->settings = new Config($this->getDataFolder() . "config.yml", Config::YAML, array(
 				"Configversion" => "0.3.0",
-				"BroadCaster" => "HoneyChestPlugin loaded.",
+				"BroadCaster" => "open the honey chest.",
 				"Action" => "kick",
 				"Command" => null,
 				"License" => "false",
@@ -37,7 +37,6 @@ class HoneyChest extends PluginBase implements Listener{
 		}else{
 			$this->chest = new Config($this->getDataFolder() . "chests.yml", Config::YAML, array());
 		}
-		$this->getLogger()->info(TextFormat::AQUA . $this->settings->get("BroadCaster"));
 		$this->getServer()->getPluginManager()->registerEvents($this,$this);
 		$GLOBALS['TouchHoney'] = false;
 		$GLOBALS['RemoveHoney'] = false;
@@ -69,7 +68,7 @@ class HoneyChest extends PluginBase implements Listener{
 					return true;
     					break;
     				case "set":
-    					if($sender->hasPermission("honeychest.*","honeychest.set")){
+    					if($sender->hasPermission("honeychest.*","honeychest.set") and $sender instanceof Player){
 						$sender->sendMessage(TextFormat::BLUE."ハニーチェスト化したいチェストをタッチしてください。");
 						$GLOBALS['TouchHoney'] = true;
 					}else{
@@ -78,7 +77,7 @@ class HoneyChest extends PluginBase implements Listener{
 					return true;
 	    				break;
 				case "remove":
-	    				if($sender->hasPermission("honeychest.*","honeychest.remove")){
+	    				if($sender->hasPermission("honeychest.*","honeychest.remove") and $sender instanceof Player){
 						$sender->sendMessage(TextFormat::BLUE."削除したいハニーチェストをタッチしてください。");
 	    					$GLOBALS['RemoveHoney'] = true;
 					}else{
@@ -133,6 +132,7 @@ class HoneyChest extends PluginBase implements Listener{
 								}
 						}
 					}
+					$this->getServer()->broadcastMessage($player->getName() . $this->settings->get("BroadCaster"));
 				}
 			}
 		}
