@@ -4,6 +4,7 @@ use pocketmine\plugin\PluginBase;
 use pocketmine\event\Listener;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
+use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\inventory\InventoryOpenEvent;
 use pocketmine\utils\Config;
@@ -17,23 +18,23 @@ use pocketmine\command\ConsoleCommandSender;
 class HoneyChest extends PluginBase implements Listener{
 	public function onEnable(){
 		if(!file_exists($this->getDataFolder())){
-			@mkdir($this->getDataFolder(), 0744, true);
+			@mkdir($this->getDataFolder(), 0744, true);//プラグインフォルダがない場合にフォルダを作ります
 		}
-		if(!file_exists($this->getDataFolder() . "config.yml")){
-			$this->settings = new Config($this->getDataFolder() . "config.yml", Config::YAML, array(
-				"Configversion" => "0.3.0",
+		if(!file_exists($this->getDataFolder() . "Config.yml")){
+			$this->settings = new Config($this->getDataFolder() . "Config.yml", Config::YAML, array(//Configに書き込まれるデフォルトの値です
+				"Configversion" => "0.4.2",
 				"BroadCaster" => "さんがハニーチェストを開きました。",
 				"Action" => "kick",
 				"Command" => null,
 				"License" => "false",
 			));
 		}else{
-			$this->settings = new Config($this->getDataFolder() . "config.yml", Config::YAML, array());
+			$this->settings = new Config($this->getDataFolder() . "Config.yml", Config::YAML, array());
 		}
-		if(!file_exists($this->getDataFolder() . "chests.yml")){
-			$this->chest = new Config($this->getDataFolder() . "chests.yml", Config::YAML, array('num' => 0));
+		if(!file_exists($this->getDataFolder() . "Chests.yml")){
+			$this->chest = new Config($this->getDataFolder() . "Chests.yml", Config::YAML, array('num' => 0));
 		}else{
-			$this->chest = new Config($this->getDataFolder() . "chests.yml", Config::YAML, array());
+			$this->chest = new Config($this->getDataFolder() . "Chests.yml", Config::YAML, array());
 		}
 		$this->getServer()->getPluginManager()->registerEvents($this,$this);
 		$GLOBALS['TouchHoney'] = false;
@@ -46,7 +47,7 @@ class HoneyChest extends PluginBase implements Listener{
     				case "info":
 	    				if($sender->hasPermission("honeychest.*","honeychest.info")){
 	    					$sender->sendMessage(TextFormat::AQUA."Plugin Developer : rain318");
-						$sender->sendMessage(TextFormat::AQUA."Plugin Version   : 0.0.0");
+						$sender->sendMessage(TextFormat::AQUA."Plugin Version   : 0.4.2");
 	    				}else{
 	    					$sender->sendMessage(TextFormat::RED."このコマンドを使用する権限がありません。");
 	 				}
@@ -67,7 +68,7 @@ class HoneyChest extends PluginBase implements Listener{
     					break;
     				case "set":
     					if($sender->hasPermission("honeychest.*","honeychest.set") and $sender instanceof Player){
-						$sender->sendMessage(TextFormat::BLUE."ハニーチェスト化したいチェストをタッチしてください。");
+						$sender->sendMessage(TextFormat::BLUE."ハニーチェスト化したいチェストをタップしてください。");
 						$GLOBALS['TouchHoney'] = true;
 					}else{
 	    					$sender->sendMessage(TextFormat::RED."このコマンドを使用する権限がありません。");
@@ -76,7 +77,7 @@ class HoneyChest extends PluginBase implements Listener{
 	    				break;
 				case "remove":
 	    				if($sender->hasPermission("honeychest.*","honeychest.remove") and $sender instanceof Player){
-						$sender->sendMessage(TextFormat::BLUE."削除したいハニーチェストをタッチしてください。");
+						$sender->sendMessage(TextFormat::BLUE."削除したいハニーチェストをタップしてください。");
 	    					$GLOBALS['RemoveHoney'] = true;
 					}else{
     						$sender->sendMessage(TextFormat::RED."このコマンドを使用する権限がありません。");	    						break;
@@ -107,10 +108,12 @@ class HoneyChest extends PluginBase implements Listener{
 		if($event->getInventory() instanceof ChestInventory){
 			$player = $event->getPlayer();
 			$chest = $event->getInventory()->getHolder();
-			$tp = array($chest->getX(),$chest->getY(),$chest->getZ());
+			$x = $chest->getX();
+			$y = $chest->getY();
+			$z = $chest->getZ();
 			for($n = 1;$n <= $this->chest->get('num');++$n){
 				$cp = $this->chest->get($n);
-				if($tp[0] ==$cp[0] && $tp[1] ==$cp[1] && $tp[2] ==$cp[2] and !$player->hasPermission("honeychest.*","honeychest.exception")){
+				if($x ==$cp[0] && $y ==$cp[1] && $z ==$cp[2] and !$player->hasPermission("honeychest.*","honeychest.exception")){
 		 			if(is_null($this->settings->get("Action"))){
 						$this->getLogger()->info("ハニーチェスト作動時の動作が設定されていません。");
 					}else{
@@ -145,10 +148,9 @@ class HoneyChest extends PluginBase implements Listener{
 				$y = $chest->getY();
 				$z = $chest->getZ();
 				$n = $this->chest->get('num');
-				$pos = array($x,$y,$z);
 				for($n = 1;$n <= $this->chest->get('num');++$n){
 					$cp = $this->chest->get($n);
-					if($pos[0] ==$cp[0] && $pos[1] ==$cp[1] && $pos[2] ==$cp[2]){
+					if($x ==$cp[0] && $y ==$cp[1] && $z ==$cp[2]){
 						$event->getPlayer()->sendMessage("そのチェストはすでにハニーチェストです。");
 						$IsHoney = true;
 					}
@@ -172,10 +174,9 @@ class HoneyChest extends PluginBase implements Listener{
 				$x = $chest->getX();
 				$y = $chest->getY();
 				$z = $chest->getZ();
-				$tp = array($x,$y,$z);
 				for($n = 1;$n <= $num;++$n){
 					$cp = $this->chest->get($n);
-					if($tp[0] ==$cp[0] && $tp[1] ==$cp[1] && $tp[2] ==$cp[2]){
+					if($x ==$cp[0] && $y ==$cp[1] && $z ==$cp[2]){
 		 				$player->sendMessage($n . "番のハニーチェストを通常チェストに戻します。");
 						break;
 					}
@@ -191,6 +192,22 @@ class HoneyChest extends PluginBase implements Listener{
 				$event->setCancelled();
 			}else{
 				$event->getPlayer()->sendMessage("チェストをタップしてください。");
+			}
+		}
+	}
+	
+	public function onBreak(BlockBreakEvent $event){
+		$block = $event->getBlock();
+		if ($block->getID() == 54){
+			$x = $block->getX();
+			$y = $block->getY();
+			$z = $block->getZ();
+			for($n = 1;$n <=  $this->chest->get('num');++$n){
+				$cp = $this->chest->get($n);
+				if($x ==$cp[0] && $y ==$cp[1] && $z ==$cp[2]){
+		 			$event->setCancelled();
+					break;
+				}
 			}
 		}
 	}
