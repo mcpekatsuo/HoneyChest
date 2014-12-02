@@ -33,7 +33,7 @@ Plugin導入後、一度サーバーを起動させる必要があります。
 |config|説明|
 |-----|-----|
 |Config version|変更しないでください。|
-|BroadCaster|HoneyChestが動作した際に、表示するメッセージを記載してください。<br>何も表示させなく無い場合は「none」と記載してください。|
+|BroadCaster|HoneyChestが動作した際に、表示するメッセージを記載してください。<br>何も表示させたくない場合は「none」と記載してください。|
 |Action|動作する際に、何を行うか記載してください。<br>kick(プレイヤーをサーバーから強制切断します)<br>ban(プレイヤーをサーバーから永久通報します)<br>cmd(任意のコマンドを実行します。)|
 |Command|Action: cmd にした際に使用します。<br>動作した際に行ってほしい、コマンドを入力してください。<br>例: Command: say HoneyChest Test Msg|
 |Do you agree with the license?|日本語訳すると「ライセンスに同意しますか？」です。<br>同意する場合は、trueと入力してください。|
@@ -66,8 +66,8 @@ info, helpはデフォルトで誰でも利用可能になっております。
 ## サポート/お問い合わせ
 古いバージョンのサポートは行っておりません。最新版のみサポートを行います。  
 ※「最新版」に、Build Versionは含みません。バージョンは、「x.y.z」の事を指します。  
-連絡は、[作者Twitter](http://twitter.com/rain318_1995)にて受け付けております。  
-質問/要望/提案 がある場合、まずは[作者Twitter](http://twitter.com/rain318_1995)に連絡を頂けると幸いです。
+連絡は、[作者Twitter](http://twitter.com/Katsuoserver)にて受け付けております。  
+質問/要望/提案 がある場合、まずは[作者Twitter](http://twitter.com/Katsuoserver)に連絡を頂けると幸いです。
 
 ## バージョンについて
 バージョンは、基本的に「X.Y.Z」で構成されております。
@@ -81,7 +81,4 @@ info, helpはデフォルトで誰でも利用可能になっております。
 また、開発途中のプログラムの場合は、「X.Y.Z [Build #]」となり、  
 プラグイン開発が完了した際に、Build番号は取り除かれます。  
 例: 「0.0.0 [Build 3]」  >>>  「0.0.0」
-
-## 既知の不具合
-* Config.ymlのBroadCasterの値をnoneにしてもハニーチェスト動作時のメッセージが流れる
 
