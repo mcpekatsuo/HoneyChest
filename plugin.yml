@@ -1,0 +1,13 @@
+name: HoneyChest
+main: HoneyChest\HoneyChest
+version: 0.0.0
+api: [1.7.1]
+load: POSTWORLD
+author: rain318
+description: HoneyChest Plugin
+website: https://github.com/rain318/HoneyChest
+commands:
+ hc:
+  description: "HoneyChest main command."
+  usage: "/hc [info/help/set/remove/reload]"
+  permission: hc.command
