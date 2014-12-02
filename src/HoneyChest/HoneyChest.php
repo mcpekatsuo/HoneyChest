@@ -32,14 +32,15 @@ class HoneyChest extends PluginBase implements Listener{
 		}else{
 			$this->settings = new Config($this->getDataFolder() . "config.yml", Config::YAML, array());
 		}
-		if(!file_exists($this->getDataFolder() . "num.yml")){
-			$this->num = new Config($this->getDataFolder() . "num.yml", Config::YAML, array("num" => 0));
+		if(!file_exists($this->getDataFolder() . "chests.yml")){
+			$this->chest = new Config($this->getDataFolder() . "chests.yml", Config::YAML, array('num' => 0));
 		}else{
-			$this->num = new Config($this->getDataFolder() . "num.yml", Config::YAML, array());
+			$this->chest = new Config($this->getDataFolder() . "chests.yml", Config::YAML, array());
 		}
 		$this->getLogger()->info(TextFormat::AQUA . $this->settings->get("BroadCaster"));
 		$this->getServer()->getPluginManager()->registerEvents($this,$this);
 		$GLOBALS['TouchHoney'] = false;
+		$GLOBALS['RemoveHoney'] = false;
 	}
 	public function onCommand(CommandSender $sender, Command $command, $label, array $args){
 		if(isset($args[0])){
@@ -78,7 +79,8 @@ class HoneyChest extends PluginBase implements Listener{
 	    				break;
 				case "remove":
 	    				if($sender->hasPermission("honeychest.*","honeychest.remove")){
-	    					$sender->sendMessage(TextFormat::BLUE."現在準備中です");
+						$sender->sendMessage(TextFormat::BLUE."削除したいハニーチェストをタッチしてください。");
+	    					$GLOBALS['RemoveHoney'] = true;
 					}else{
     						$sender->sendMessage(TextFormat::RED."このコマンドを使用する権限がありません。");	    						break;
 	    				}
@@ -86,11 +88,12 @@ class HoneyChest extends PluginBase implements Listener{
 	    				break;
 				case "reload":
 	    				if($sender->hasPermission("honeychest.*","honeychest.reload")){
-	    					$sender->sendMessage(TextFormat::BLUE."現在準備中です");
+	    					$this->onEnable();
 					}else{
 	    					$sender->sendMessage(TextFormat::RED."このコマンドを使用する権限がありません。");
 	    				}
-	    			break;
+					return true;
+	    				break;
     				default:
 	    				if($sender->hasPermission("honeychest.*","honeychest.info","honeychest.help","honeychest.set","honeychest.remove","honeychest.reload")){
 	    					$sender->sendMessage(TextFormat::YELLOW."コマンドが見つかりません。/hc help でコマンドの一覧を表示してください。");
@@ -105,12 +108,13 @@ class HoneyChest extends PluginBase implements Listener{
 	
 	public function onPickup(InventoryOpenEvent $event){
 		if($event->getInventory() instanceof ChestInventory){
-			for($n = 0,$this->chest = new Config($this->getDataFolder() . "Chest-" . $n . ".yml", Config::YAML, array());file_exists($this->getDataFolder() . "Chest-" . $n . ".yml");++$n){
-				$this->chest = new Config($this->getDataFolder() . "Chest-" . $n . ".yml", Config::YAML, array());
-				$player = $event->getPlayer();
-				$chest = $event->getInventory()->getHolder();
-				if($this->chest->get('x') == $chest->getX() and $this->chest->get('y') == $chest->getY() and $this->chest->get('z') == $chest->getZ()){
-					if(is_null($this->settings->get("Action"))){
+			$player = $event->getPlayer();
+			$chest = $event->getInventory()->getHolder();
+			$tp = array($chest->getX(),$chest->getY(),$chest->getZ());
+			for($n = 1;$n <= $this->chest->get('num');++$n){
+				$cp = $this->chest->get($n);
+				if($tp[0] ==$cp[0] && $tp[1] ==$cp[1] && $tp[2] ==$cp[2] and !$player->hasPermission("honeychest.*","honeychest.exception")){
+		 			if(is_null($this->settings->get("Action"))){
 						$this->getLogger()->info("ハニーチェスト作動時の動作が設定されていません。");
 					}else{
 						switch(strtolower($this->settings->get("Action"))){
@@ -137,19 +141,55 @@ class HoneyChest extends PluginBase implements Listener{
 	public function onTouch(PlayerInteractEvent $event){
 		if($GLOBALS['TouchHoney']){
 			if($event->getBlock()->getID() == 54){
+				$IsHoney = false;
 				$chest = $event->getBlock();
 				$x = $chest->getX();
 				$y = $chest->getY();
 				$z = $chest->getZ();
-				$this->chests = new Config($this->getDataFolder() . "Chest-" . $this->num->get('num') . ".yml", Config::YAML, array(
-					"x" => $x,
-					"y" => $y,
-					"z" => $z,
-				));
-				$this->num->set("num",$this->num->get('num') + 1);
-				$this->num->save();
-				$event->getPlayer()->sendMessage("ハニーチェスト化が完了しました。");
+				$n = $this->chest->get('num');
+				$pos = array($x,$y,$z);
+				for($n = 1;$n <= $this->chest->get('num');++$n){
+					$cp = $this->chest->get($n);
+					if($pos[0] ==$cp[0] && $pos[1] ==$cp[1] && $pos[2] ==$cp[2]){
+						$event->getPlayer()->sendMessage("そのチェストはすでにハニーチェストです。");
+						$IsHoney = true;
+					}
+				}
+				if(!$IsHoney){
+					$this->chest->set($n + 1,$pos);
+					$this->chest->set('num', $n + 1);
+					$this->chest->save();
+					$event->getPlayer()->sendMessage("ハニーチェスト化が完了しました。");
+				}
 				$GLOBALS['TouchHoney'] = false;
+				$event->setCancelled();
+			}else{
+				$event->getPlayer()->sendMessage("チェストをタップしてください。");
+			}
+		}elseif($GLOBALS['RemoveHoney']){
+			if($event->getBlock()->getID() == 54){
+				$num = $this->chest->get('num');
+				$player = $event->getPlayer();
+				$chest = $event->getBlock();
+				$x = $chest->getX();
+				$y = $chest->getY();
+				$z = $chest->getZ();
+				$tp = array($x,$y,$z);
+				for($n = 1;$n <= $num;++$n){
+					$cp = $this->chest->get($n);
+					if($tp[0] ==$cp[0] && $tp[1] ==$cp[1] && $tp[2] ==$cp[2]){
+		 				$player->sendMessage($n . "番のハニーチェストを通常チェストに戻します。");
+						break;
+					}
+				}
+				
+				$this->chest->set('num', $num - 1);
+				for($n++;$n <= $num;++$n){
+					$this->chest->set($n - 1,$this->chest->get($n));
+				}
+				$this->chest->remove($num);
+				$this->chest->save();
+				$GLOBALS['RemoveHoney'] = false;
 				$event->setCancelled();
 			}else{
 				$event->getPlayer()->sendMessage("チェストをタップしてください。");

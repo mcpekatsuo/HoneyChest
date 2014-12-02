@@ -11,3 +11,26 @@ commands:
   description: "HoneyChest main command."
   usage: "/hc [info/help/set/remove/reload]"
   permission: hc.command
+permissions:
+ honeychest.*:
+  description: "HoneyChest Pluginで提供される全機能が使用可能になります。"
+  default: op
+  children:
+   honeychest.info:
+    default: true
+    description: "/hc infoが使用可能になります。"
+   honeychest.help:
+    default: true
+    description: "/hc helpが使用可能になります。"
+   honeychest.set:
+    default: op
+    description: "/hc setが使用可能になります。"
+   honeychest.remove:
+    default: op
+    description: "/hc removeが使用可能になります。"
+   honeychest.reload:
+    default: op
+    description: "/hc reloadが使用可能になります。"
+   honeychest.exception:
+    default: op
+    description: "この権限を持っている人がハニーチェストを開けてもKickなどの機能が作動しません。"
