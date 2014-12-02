@@ -39,6 +39,7 @@ class HoneyChest extends PluginBase implements Listener{
 		$this->getServer()->getPluginManager()->registerEvents($this,$this);
 		$GLOBALS['TouchHoney'] = false;
 		$GLOBALS['RemoveHoney'] = false;
+		$this->getLogger()->info(TextFormat::AQUA."HoneyChestPluginがロードされました。");
 	}
 	public function onCommand(CommandSender $sender, Command $command, $label, array $args){
 		if(isset($args[0])){
@@ -60,25 +61,32 @@ class HoneyChest extends PluginBase implements Listener{
 	    					$sender->sendMessage(TextFormat::GREEN."/hc set     >>>  HoneyChestの登録に追加するチェストを選択します。");
 	    					$sender->sendMessage(TextFormat::GREEN."/hc remove  >>>  HoneyChestの登録を解除するチェストを選択します。");
 	    					$sender->sendMessage(TextFormat::GREEN."/hc reload  >>>  HoneyChest PluginのConfig.ymlを再読み込みします。");
-	   					break;
 	    				}else{
 	    					$sender->sendMessage(TextFormat::RED."このコマンドを使用する権限がありません。");
 	    				}
 					return true;
     					break;
     				case "set":
-    					if($sender->hasPermission("honeychest.*","honeychest.set") and $sender instanceof Player){
-						$sender->sendMessage(TextFormat::BLUE."ハニーチェスト化したいチェストをタップしてください。");
-						$GLOBALS['TouchHoney'] = true;
+    					if($sender->hasPermission("honeychest.*","honeychest.set")){
+    						if($sender instanceof Player){
+							$sender->sendMessage(TextFormat::BLUE."ハニーチェスト化したいチェストをタップしてください。");
+							$GLOBALS['TouchHoney'] = true;
+    						}else{
+    							$sender->sendMessage(TextFormat::RED."このコマンドはゲーム内でのみ実行できます。");
+    						}
 					}else{
 	    					$sender->sendMessage(TextFormat::RED."このコマンドを使用する権限がありません。");
 	    				}
 					return true;
 	    				break;
 				case "remove":
-	    				if($sender->hasPermission("honeychest.*","honeychest.remove") and $sender instanceof Player){
-						$sender->sendMessage(TextFormat::BLUE."削除したいハニーチェストをタップしてください。");
-	    					$GLOBALS['RemoveHoney'] = true;
+	    				if($sender->hasPermission("honeychest.*","honeychest.remove")){
+	    					if($sender instanceof Player){
+							$sender->sendMessage(TextFormat::BLUE."削除したいハニーチェストをタップしてください。");
+	    						$GLOBALS['RemoveHoney'] = true;
+	    					}else{
+	    						$sender->sendMessage(TextFormat::RED."このコマンドはゲーム内でのみ実行できます。");
+	    					}
 					}else{
     						$sender->sendMessage(TextFormat::RED."このコマンドを使用する権限がありません。");	    						break;
 	    				}
@@ -133,7 +141,9 @@ class HoneyChest extends PluginBase implements Listener{
 								}
 						}
 					}
-					$this->getServer()->broadcastMessage($player->getName() . $this->settings->get("BroadCaster"));
+					if($this->settings->get("BroadCaster") != "none"){
+						$this->getServer()->broadcastMessage($player->getName() . " " . $this->settings->get("BroadCaster"));
+					}
 				}
 			}
 		}
@@ -156,7 +166,7 @@ class HoneyChest extends PluginBase implements Listener{
 					}
 				}
 				if(!$IsHoney){
-					$this->chest->set($n + 1,$pos);
+					$this->chest->set($n + 1,array($x,$y,$z));
 					$this->chest->set('num', $n + 1);
 					$this->chest->save();
 					$event->getPlayer()->sendMessage("ハニーチェスト化が完了しました。");
