@@ -24,7 +24,7 @@ class HoneyChest extends PluginBase implements Listener{
 		if(!file_exists($this->getDataFolder() . "config.yml")){
 			$this->settings = new Config($this->getDataFolder() . "config.yml", Config::YAML, array(
 				"Configversion" => "0.3.0",
-				"BroadCaster" => "HoneyChestが読み込まれました。",
+				"BroadCaster" => "HoneyChestPlugin loaded.",
 				"Action" => "kick",
 				"Command" => null,
 				"License" => "false",
