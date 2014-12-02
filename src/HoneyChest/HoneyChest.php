@@ -4,16 +4,14 @@ use pocketmine\plugin\PluginBase;
 use pocketmine\event\Listener;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\command\CommandExecutor;	
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\inventory\InventoryOpenEvent;
-use pocketmine\utils\Config;			#config.yml
-use pocketmine\utils\TextFormat;		#ColorText
-use pocketmine\Permission;	# Permission
+use pocketmine\utils\Config;
+use pocketmine\utils\TextFormat;
+use pocketmine\Permission;
 use pocketmine\inventory\ChestInventory;
 use pocketmine\Player;
 use pocketmine\Server;
-use pocketmine\event\player\PlayerChatEvent;
 use pocketmine\command\ConsoleCommandSender;
 
 class HoneyChest extends PluginBase implements Listener{
@@ -24,7 +22,7 @@ class HoneyChest extends PluginBase implements Listener{
 		if(!file_exists($this->getDataFolder() . "config.yml")){
 			$this->settings = new Config($this->getDataFolder() . "config.yml", Config::YAML, array(
 				"Configversion" => "0.3.0",
-				"BroadCaster" => "open the honey chest.",
+				"BroadCaster" => "さんがハニーチェストを開きました。",
 				"Action" => "kick",
 				"Command" => null,
 				"License" => "false",
