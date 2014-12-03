@@ -40,6 +40,11 @@ class HoneyChest extends PluginBase implements Listener{
 		$GLOBALS['TouchHoney'] = false;
 		$GLOBALS['RemoveHoney'] = false;
 		$this->getLogger()->info(TextFormat::AQUA."HoneyChestPluginがロードされました。");
+		if($this->settings->get('License') != true){
+			$this->getLogger()->info(TextFormat::RED."Config.ymlのLicenseをtrueにして下さい。");
+			$this->getLogger()->info(TextFormat::RED."プラグインを無効化します…");
+			$this->getServer()->getPluginManager()->disablePlugin($this);
+		}
 	}
 	public function onCommand(CommandSender $sender, Command $command, $label, array $args){
 		if(isset($args[0])){
