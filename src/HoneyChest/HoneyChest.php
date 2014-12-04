@@ -22,7 +22,7 @@ class HoneyChest extends PluginBase implements Listener{
 		}
 		if(!file_exists($this->getDataFolder() . "Config.yml")){
 			$this->settings = new Config($this->getDataFolder() . "Config.yml", Config::YAML, array(//Configに書き込まれるデフォルトの値です
-				"Configversion" => "0.4.2",
+				"Configversion" => "0.4.3",
 				"BroadCaster" => "さんがハニーチェストを開きました。",
 				"Action" => "kick",
 				"Command" => null,
@@ -52,8 +52,8 @@ class HoneyChest extends PluginBase implements Listener{
     			switch($param){
     				case "info":
 	    				if($sender->hasPermission("honeychest.*","honeychest.info")){
-	    					$sender->sendMessage(TextFormat::AQUA."Plugin Developer : rain318");
-						$sender->sendMessage(TextFormat::AQUA."Plugin Version   : 0.4.2");
+	    					$sender->sendMessage(TextFormat::AQUA."Plugin Developer : mcpekatsuo");
+						$sender->sendMessage(TextFormat::AQUA."Plugin Version   : 0.4.3");
 	    				}else{
 	    					$sender->sendMessage(TextFormat::RED."このコマンドを使用する権限がありません。");
 	 				}
