@@ -52,8 +52,8 @@ class HoneyChest extends PluginBase implements Listener{
     			switch($param){
     				case "info":
 	    				if($sender->hasPermission("honeychest.*","honeychest.info")){
-	    					$sender->sendMessage(TextFormat::AQUA."Plugin Developer : rain318");
-						$sender->sendMessage(TextFormat::AQUA."Plugin Version   : 0.4.2");
+	    					$sender->sendMessage(TextFormat::AQUA."Plugin Developer : mcpekatsuo");
+						$sender->sendMessage(TextFormat::AQUA."Plugin Version   : 0.4.3");
 	    				}else{
 	    					$sender->sendMessage(TextFormat::RED."このコマンドを使用する権限がありません。");
 	 				}
