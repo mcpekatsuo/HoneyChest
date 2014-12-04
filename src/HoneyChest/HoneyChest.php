@@ -22,7 +22,7 @@ class HoneyChest extends PluginBase implements Listener{
 		}
 		if(!file_exists($this->getDataFolder() . "Config.yml")){
 			$this->settings = new Config($this->getDataFolder() . "Config.yml", Config::YAML, array(//Configに書き込まれるデフォルトの値です
-				"Configversion" => "0.4.2",
+				"Configversion" => "0.4.3",
 				"BroadCaster" => "さんがハニーチェストを開きました。",
 				"Action" => "kick",
 				"Command" => null,
