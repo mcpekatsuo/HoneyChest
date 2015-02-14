@@ -1,21 +1,25 @@
 <?php
+
 namespace HoneyChest;
-use pocketmine\plugin\PluginBase;
-use pocketmine\event\Listener;
+
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
+use pocketmine\command\ConsoleCommandSender;
+
+use pocketmine\plugin\PluginBase;
+use pocketmine\utils\Config;
+use pocketmine\utils\TextFormat;
+use pocketmine\Player;
+use pocketmine\Server;
+use pocketmine\inventory\ChestInventory;
+
+use pocketmine\event\Listener;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\inventory\InventoryOpenEvent;
-use pocketmine\utils\Config;
-use pocketmine\utils\TextFormat;
-use pocketmine\Permission;
-use pocketmine\inventory\ChestInventory;
-use pocketmine\Player;
-use pocketmine\Server;
-use pocketmine\command\ConsoleCommandSender;
 
 class HoneyChest extends PluginBase implements Listener{
+
 	public function onEnable(){
 		if(!file_exists($this->getDataFolder())){
 			@mkdir($this->getDataFolder(), 0744, true);//プラグインフォルダがない場合にフォルダを作ります
@@ -37,8 +41,8 @@ class HoneyChest extends PluginBase implements Listener{
 			$this->chest = new Config($this->getDataFolder() . "Chests.yml", Config::YAML, array());
 		}
 		$this->getServer()->getPluginManager()->registerEvents($this,$this);
-		$GLOBALS['TouchHoney'] = false;
-		$GLOBALS['RemoveHoney'] = false;
+		$GLOBALS['TouchHoney'] = [];
+		$GLOBALS['RemoveHoney'] = [];
 		$this->getLogger()->info(TextFormat::AQUA."HoneyChestPluginがロードされました。");
 		if($this->settings->get('License') != true){
 			$this->getLogger()->info(TextFormat::RED."Config.ymlのLicenseをtrueにして下さい。");
@@ -46,13 +50,14 @@ class HoneyChest extends PluginBase implements Listener{
 			$this->getServer()->getPluginManager()->disablePlugin($this);
 		}
 	}
+
 	public function onCommand(CommandSender $sender, Command $command, $label, array $args){
 		if(isset($args[0])){
 			$param = strtolower($args[0]);
     			switch($param){
     				case "info":
 	    				if($sender->hasPermission("honeychest.*","honeychest.info")){
-	    					$sender->sendMessage(TextFormat::AQUA."Plugin Developer : mcpekatsuo");
+	    					$sender->sendMessage(TextFormat::AQUA."Plugin Developer : Hmy2001");
 						$sender->sendMessage(TextFormat::AQUA."Plugin Version   : 0.4.3");
 	    				}else{
 	    					$sender->sendMessage(TextFormat::RED."このコマンドを使用する権限がありません。");
@@ -75,7 +80,7 @@ class HoneyChest extends PluginBase implements Listener{
     					if($sender->hasPermission("honeychest.*","honeychest.set")){
     						if($sender instanceof Player){
 							$sender->sendMessage(TextFormat::BLUE."ハニーチェスト化したいチェストをタップしてください。");
-							$GLOBALS['TouchHoney'] = true;
+							$GLOBALS['TouchHoney'][$sender->getName()] = true;
     						}else{
     							$sender->sendMessage(TextFormat::RED."このコマンドはゲーム内でのみ実行できます。");
     						}
@@ -88,7 +93,7 @@ class HoneyChest extends PluginBase implements Listener{
 	    				if($sender->hasPermission("honeychest.*","honeychest.remove")){
 	    					if($sender instanceof Player){
 							$sender->sendMessage(TextFormat::BLUE."削除したいハニーチェストをタップしてください。");
-	    						$GLOBALS['RemoveHoney'] = true;
+	    						$GLOBALS['RemoveHoney'][$sender->getName()] = true;
 	    					}else{
 	    						$sender->sendMessage(TextFormat::RED."このコマンドはゲーム内でのみ実行できます。");
 	    					}
@@ -155,7 +160,7 @@ class HoneyChest extends PluginBase implements Listener{
 	}
 	
 	public function onTouch(PlayerInteractEvent $event){
-		if($GLOBALS['TouchHoney']){
+		if($GLOBALS['TouchHoney'][$event->getPlayer()->getName()]){
 			if($event->getBlock()->getID() == 54){
 				$IsHoney = false;
 				$chest = $event->getBlock();
@@ -176,12 +181,12 @@ class HoneyChest extends PluginBase implements Listener{
 					$this->chest->save();
 					$event->getPlayer()->sendMessage("ハニーチェスト化が完了しました。");
 				}
-				$GLOBALS['TouchHoney'] = false;
+				$GLOBALS['TouchHoney'][$event->getPlayer()->getName()] = false;
 				$event->setCancelled();
 			}else{
 				$event->getPlayer()->sendMessage("チェストをタップしてください。");
 			}
-		}elseif($GLOBALS['RemoveHoney']){
+		}elseif($GLOBALS['RemoveHoney'][$event->getPlayer()->getName()]){
 			if($event->getBlock()->getID() == 54){
 				$num = $this->chest->get('num');
 				$player = $event->getPlayer();
