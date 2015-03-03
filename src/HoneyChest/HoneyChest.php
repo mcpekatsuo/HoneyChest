@@ -41,8 +41,8 @@ class HoneyChest extends PluginBase implements Listener{
 			$this->chest = new Config($this->getDataFolder() . "Chests.yml", Config::YAML, array());
 		}
 		$this->getServer()->getPluginManager()->registerEvents($this,$this);
-		$GLOBALS['TouchHoney'] = [];
-		$GLOBALS['RemoveHoney'] = [];
+		$this->GLOBALS['TouchHoney'] = [];
+		$this->GLOBALS['RemoveHoney'] = [];
 		$this->getLogger()->info(TextFormat::AQUA."HoneyChestPluginがロードされました。");
 		if($this->settings->get('License') != true){
 			$this->getLogger()->info(TextFormat::RED."Config.ymlのLicenseをtrueにして下さい。");
@@ -80,7 +80,7 @@ class HoneyChest extends PluginBase implements Listener{
     					if($sender->hasPermission("honeychest.*","honeychest.set")){
     						if($sender instanceof Player){
 							$sender->sendMessage(TextFormat::BLUE."ハニーチェスト化したいチェストをタップしてください。");
-							$GLOBALS['TouchHoney'][$sender->getName()] = true;
+							$this->GLOBALS['TouchHoney'][$sender->getName()] = true;
     						}else{
     							$sender->sendMessage(TextFormat::RED."このコマンドはゲーム内でのみ実行できます。");
     						}
@@ -93,7 +93,7 @@ class HoneyChest extends PluginBase implements Listener{
 	    				if($sender->hasPermission("honeychest.*","honeychest.remove")){
 	    					if($sender instanceof Player){
 							$sender->sendMessage(TextFormat::BLUE."削除したいハニーチェストをタップしてください。");
-	    						$GLOBALS['RemoveHoney'][$sender->getName()] = true;
+	    						$this->GLOBALS['RemoveHoney'][$sender->getName()] = true;
 	    					}else{
 	    						$sender->sendMessage(TextFormat::RED."このコマンドはゲーム内でのみ実行できます。");
 	    					}
@@ -158,7 +158,7 @@ class HoneyChest extends PluginBase implements Listener{
 			}
 		}
 	}
-	
+
 	public function onTouch(PlayerInteractEvent $event){
 		if($GLOBALS['TouchHoney'][$event->getPlayer()->getName()]){
 			if($event->getBlock()->getID() == 54){
@@ -181,12 +181,12 @@ class HoneyChest extends PluginBase implements Listener{
 					$this->chest->save();
 					$event->getPlayer()->sendMessage("ハニーチェスト化が完了しました。");
 				}
-				$GLOBALS['TouchHoney'][$event->getPlayer()->getName()] = false;
+				$this->GLOBALS['TouchHoney'][$event->getPlayer()->getName()] = false;
 				$event->setCancelled();
 			}else{
 				$event->getPlayer()->sendMessage("チェストをタップしてください。");
 			}
-		}elseif($GLOBALS['RemoveHoney'][$event->getPlayer()->getName()]){
+		}elseif($this->GLOBALS['RemoveHoney'][$event->getPlayer()->getName()]){
 			if($event->getBlock()->getID() == 54){
 				$num = $this->chest->get('num');
 				$player = $event->getPlayer();
@@ -208,7 +208,7 @@ class HoneyChest extends PluginBase implements Listener{
 				}
 				$this->chest->remove($num);
 				$this->chest->save();
-				$GLOBALS['RemoveHoney'] = false;
+				$this->GLOBALS['RemoveHoney'][$sender->getName()] = false;
 				$event->setCancelled();
 			}else{
 				$event->getPlayer()->sendMessage("チェストをタップしてください。");
