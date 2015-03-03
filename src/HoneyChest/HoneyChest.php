@@ -160,7 +160,7 @@ class HoneyChest extends PluginBase implements Listener{
 	}
 
 	public function onTouch(PlayerInteractEvent $event){
-		if($GLOBALS['TouchHoney'][$event->getPlayer()->getName()]){
+		if($this->GLOBALS['TouchHoney'][$event->getPlayer()->getName()]){
 			if($event->getBlock()->getID() == 54){
 				$IsHoney = false;
 				$chest = $event->getBlock();
