@@ -208,7 +208,7 @@ class HoneyChest extends PluginBase implements Listener{
 				}
 				$this->chest->remove($num);
 				$this->chest->save();
-				$this->GLOBALS['RemoveHoney'][$sender->getName()] = false;
+				$this->GLOBALS['RemoveHoney'][$event->getPlayer()->getName()] = false;
 				$event->setCancelled();
 			}else{
 				$event->getPlayer()->sendMessage("チェストをタップしてください。");
